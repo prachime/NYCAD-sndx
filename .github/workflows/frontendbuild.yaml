@@ -1,42 +1,36 @@
 on: workflow_call
-
 jobs:
   Frontend-Build:
     runs-on: ubuntu-latest
     name: Frontend-Build
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v4 
       - name: Use Node.js
         uses: actions/setup-node@v4
-
       - name: Install dependencies
         run: npm install
-
       - name: npm build
         run: npm run build --if-present
-
       - name: Configure AWS credentials
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ${{ secrets.AWS_REGION }}
-
+              aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              aws configure set region ${{ secrets.AWS_REGION }}
+          
       - name: Build Docker image
         run: |
-          IMAGE_TAG=$GITHUB_RUN_ID
-          docker build -t 097096559031.dkr.ecr.us-east-1.amazonaws.com/nycad_frontend:${IMAGE_TAG} .
+              IMAGE_TAG=$GITHUB_RUN_ID
+              docker build -t 097096559031.dkr.ecr.us-east-1.amazonaws.com/nycad_frontend:${IMAGE_TAG} .
 
       - name: Login to Amazon ECR
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
-            | docker login --username AWS --password-stdin 097096559031.dkr.ecr.us-east-1.amazonaws.com
+              aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 097096559031.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Push Docker Image to ECR
         run: |
-          IMAGE_TAG=$GITHUB_RUN_ID
-          docker push 097096559031.dkr.ecr.us-east-1.amazonaws.com/nycad_frontend:${IMAGE_TAG}
+              IMAGE_TAG=$GITHUB_RUN_ID
+              docker push 097096559031.dkr.ecr.us-east-1.amazonaws.com/nycad_frontend:${IMAGE_TAG}
 
       - name: Logout from Docker
         run: docker logout
