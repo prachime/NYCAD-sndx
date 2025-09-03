@@ -1,0 +1,13 @@
+name: Build_Frontend_Backend
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Frontend_Build:
+    uses: ./.github/workflows/frontendbuild.yaml
+  
+  Backend_Build:
+    uses: ./.github/workflows/backendbuild.yaml
+   
