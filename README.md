@@ -4,10 +4,16 @@
 - Backend: Node.js + Express + Postgres, daily sync job
 - Frontend: React + Tailwind CSS
 - Orchestration: docker-compose
+- CI/CD: GitHub Action -> Build & Push Docker images to AWS ECR
 
 ## Project Structure
 
 ```
+.github/workflows/
+  backendbuild.yaml
+  frontendbuild.yaml
+  ci.yaml
+
 /backend
   src/
     server.js
@@ -24,6 +30,7 @@
   package.json
   Dockerfile
   .env.example
+
 /frontend
   src/
     App.jsx
@@ -44,6 +51,7 @@
 
 docker-compose.yml
 README.md
+.gitignore
 ```
 
 ## Backend Setup (Local)
@@ -83,6 +91,16 @@ docker-compose up --build
 - Frontend: http://localhost:5173
 - Backend: http://localhost:4000
 - Postgres: localhost:5432 (user `postgres`, password `postgres`, db `fhv`)
+
+## CI/CD Workflows (GitHub Actions)
+
+This project uses GitHub Actions to build and push Docker iimages to AWS ECR.
+
+- `backendbuild.yaml` -> Builds backend service & pushes Docker image
+                         `nycad_backend:<RUN_ID>`
+- `frontendbuild.yaml` -> Builds frontend service & pushes Docker image
+                          `nycad_frontend:<RUN_ID>`
+- `ci.yaml` -> Manual trigger `workflow_dispatch` to run both frontend &       backend builds together
 
 ## Notes
 
